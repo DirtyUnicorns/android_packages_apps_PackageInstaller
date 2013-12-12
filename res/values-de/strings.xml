@@ -79,4 +79,9 @@
     <string name="devicePerms" msgid="6733560207731294504">"Gerätezugriff"</string>
     <string name="no_new_perms" msgid="6657813692169565975">"Für dieses Update sind keine neuen Berechtigungen erforderlich."</string>
     <string name="grant_confirm_question" msgid="4690289297029223742">"Möchten Sie die folgenden Berechtigungen gewähren? Diese ermöglichen den Zugriff auf Folgendes:"</string>
+
+    <string name="no_perms">Für diese App sind keine Berechtigungen erforderlich.</string>
+    <string name="currentVersion">Aktuelle Version:</string>
+    <string name="newVersion">Neue Version:</string>
+    <string name="not_available">nicht verfügbar</string>
 </resources>
