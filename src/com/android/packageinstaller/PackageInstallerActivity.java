@@ -49,6 +49,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AppSecurityPermissions;
 import android.widget.Button;
+import android.widget.GridLayout;
+import android.widget.ScrollView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -115,7 +117,7 @@ public class PackageInstallerActivity extends Activity implements OnCancelListen
     private void startInstallConfirm() {
         TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);
         tabHost.setup();
-        ViewPager viewPager = (ViewPager)findViewById(R.id.pager);
+        final ViewPager viewPager = (ViewPager)findViewById(R.id.pager);
         TabsAdapter adapter = new TabsAdapter(this, tabHost, viewPager);
         adapter.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
@@ -135,9 +137,10 @@ public class PackageInstallerActivity extends Activity implements OnCancelListen
         mScrollView = null;
         mOkCanInstall = false;
         int msg = 0;
-
         AppSecurityPermissions perms = new AppSecurityPermissions(this, mPkgInfo);
         final int N = perms.getPermissionCount(AppSecurityPermissions.WHICH_ALL);
+        LayoutInflater inflater = (LayoutInflater)getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
         if (mAppInfo != null) {
             msg = (mAppInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0
                     ? R.string.install_confirm_question_update_system
@@ -156,22 +159,15 @@ public class PackageInstallerActivity extends Activity implements OnCancelListen
                 }
             }
             if (!supportsRuntimePermissions && !newPermissionsFound) {
-                LayoutInflater inflater = (LayoutInflater)getSystemService(
-                        Context.LAYOUT_INFLATER_SERVICE);
                 TextView label = (TextView)inflater.inflate(R.layout.label, null);
                 label.setText(R.string.no_new_perms);
                 mScrollView.addView(label);
             }
             adapter.addTab(tabHost.newTabSpec(TAB_ID_NEW).setIndicator(
                     getText(R.string.newPerms)), mScrollView);
-        } else  {
-            findViewById(R.id.tabscontainer).setVisibility(View.GONE);
-            findViewById(R.id.divider).setVisibility(View.VISIBLE);
         }
         if (!supportsRuntimePermissions && N > 0) {
             permVisible = true;
-            LayoutInflater inflater = (LayoutInflater)getSystemService(
-                    Context.LAYOUT_INFLATER_SERVICE);
             View root = inflater.inflate(R.layout.permissions_list, null);
             if (mScrollView == null) {
                 mScrollView = (CaffeinatedScrollView)root.findViewById(R.id.scrollview);
@@ -180,26 +176,49 @@ public class PackageInstallerActivity extends Activity implements OnCancelListen
                         perms.getPermissionsView(AppSecurityPermissions.WHICH_ALL));
             adapter.addTab(tabHost.newTabSpec(TAB_ID_ALL).setIndicator(
                     getText(R.string.allPerms)), root);
-        }
-        mInstallFlowAnalytics.setPermissionsDisplayed(permVisible);
-        if (!permVisible) {
-            if (mAppInfo != null) {
-                // This is an update to an application, but there are no
-                // permissions at all.
-                msg = (mAppInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0
-                        ? R.string.install_confirm_question_update_system_no_perms
-                        : R.string.install_confirm_question_update_no_perms;
             } else {
-                // This is a new application with no permissions.
-                msg = R.string.install_confirm_question_no_perms;
+                if (mAppInfo != null) {
+                    // This is an update to an application, but there are no
+                    // permissions at all.
+                    msg = (mAppInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0
+                            ? R.string.install_confirm_question_update_system_no_perms
+                            : R.string.install_confirm_question_update_no_perms;
+                } else {
+                    // This is a new application with no permissions.
+                    msg = R.string.install_confirm_question_no_perms;
+                }
+                mScrollView = new CaffeinatedScrollView(this);
+                mScrollView.setFillViewport(true);
+                TextView label = (TextView)inflater.inflate(R.layout.label, null);
+                label.setText(R.string.no_perms);
+                mScrollView.addView(label);
+                adapter.addTab(tabHost.newTabSpec("all").setIndicator(
+                        getText(R.string.allPerms)), mScrollView);
             }
-            tabHost.setVisibility(View.GONE);
-            mInstallFlowAnalytics.setAllPermissionsDisplayed(false);
-            mInstallFlowAnalytics.setNewPermissionsDisplayed(false);
-            findViewById(R.id.filler).setVisibility(View.VISIBLE);
-            findViewById(R.id.divider).setVisibility(View.GONE);
-            mScrollView = null;
-        }
+
+            mScrollView = new CaffeinatedScrollView(this);
+            mScrollView.setFillViewport(true);
+            GridLayout layoutVersion = (GridLayout)inflater.inflate(R.layout.app_version, null);
+            ((TextView)layoutVersion.findViewById(R.id.app_new_version)).setText(mPkgInfo.versionName);
+            if (mAppInfo != null) {
+                PackageInfo pkgCurrent = null;
+                try {
+                    pkgCurrent = mPm.getPackageInfo(mAppInfo.packageName, PackageManager.GET_UNINSTALLED_PACKAGES);
+                    if (pkgCurrent == null) {
+                        ((TextView)layoutVersion.findViewById(R.id.app_current_version)).setText(R.string.not_available);
+                    } else {
+                        ((TextView)layoutVersion.findViewById(R.id.app_current_version)).setText(pkgCurrent.versionName);
+                    }
+                } catch (PackageManager.NameNotFoundException ex) {
+                    ((TextView)layoutVersion.findViewById(R.id.app_current_version)).setText(R.string.not_available);
+                }
+            } else {
+                ((TextView)layoutVersion.findViewById(R.id.app_current_version)).setText(R.string.not_available);
+            }
+            mScrollView.addView(layoutVersion);
+            adapter.addTab(tabHost.newTabSpec("version").setIndicator(
+                    getText(R.string.appVersion)), mScrollView);
+
         if (msg != 0) {
             ((TextView)findViewById(R.id.install_confirm_question)).setText(msg);
         }
@@ -214,11 +233,18 @@ public class PackageInstallerActivity extends Activity implements OnCancelListen
             mOk.setText(R.string.install);
             mOkCanInstall = true;
         } else {
+            mOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    viewPager.setCurrentItem(viewPager.getCurrentItem() + 1, true);
+                }
+            });
             mScrollView.setFullScrollAction(new Runnable() {
                 @Override
                 public void run() {
                     mOk.setText(R.string.install);
                     mOkCanInstall = true;
+                    mOk.setOnClickListener(PackageInstallerActivity.this);
                 }
             });
         }
