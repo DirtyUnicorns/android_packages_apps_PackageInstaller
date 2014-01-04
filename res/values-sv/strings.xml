@@ -79,4 +79,8 @@
     <string name="devicePerms" msgid="6733560207731294504">"Enhetsåtkomst"</string>
     <string name="no_new_perms" msgid="6657813692169565975">"Det krävs inga nya behörigheter för den här uppdateringen."</string>
     <string name="grant_confirm_question" msgid="4690289297029223742">"Vill du bevilja följande behörigheter? Då godkänner du åtkomst till:"</string>
+    <string name="appVersion">Versionsinfo</string>
+    <string name="currentVersion">Aktuell version</string>
+    <string name="newVersion">Ny version</string>
+    <string name="not_available">Ej tillgänglig</string>
 </resources>
