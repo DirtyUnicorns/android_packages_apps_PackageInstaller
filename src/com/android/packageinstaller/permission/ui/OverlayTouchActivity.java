@@ -16,8 +16,11 @@
 package com.android.packageinstaller.permission.ui;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.provider.Settings;
 import android.view.MotionEvent;
+import android.util.Log;
 
 public class OverlayTouchActivity extends Activity {
 
@@ -29,8 +32,14 @@ public class OverlayTouchActivity extends Activity {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        mObscuredTouch = (event.getFlags() & (MotionEvent.FLAG_WINDOW_IS_OBSCURED
+        final boolean overlayCheckDisabled = Settings.Secure.getInt(getContentResolver(),
+                Settings.Secure.PACKAGE_INSTALL_OVERLAY_CHECK_DISABLED, 0) != 0;
+        if (overlayCheckDisabled) {
+            mObscuredTouch = false;
+        } else {
+            mObscuredTouch = (event.getFlags() & (MotionEvent.FLAG_WINDOW_IS_OBSCURED
                 | MotionEvent.FLAG_WINDOW_IS_PARTIALLY_OBSCURED)) != 0;
+        }
         return super.dispatchTouchEvent(event);
     }
 
