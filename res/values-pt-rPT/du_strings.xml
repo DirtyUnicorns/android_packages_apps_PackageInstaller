@@ -17,10 +17,10 @@
  -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!-- Tab label for version information [CHAR LIMIT=20] -->
-  <string name="appVersion">Versionsinformationen</string>
+  <string name="appVersion">Informação de versão</string>
   <!-- Body text for new tab when there are no permissions [CHAR LIMIT=NONE] -->
-  <string name="no_perms">Für diese App sind keine Berechtigungen erforderlich.</string>
-  <string name="currentVersion">Aktuelle Version:</string>
-  <string name="newVersion">Neue Version:</string>
-  <string name="not_available">nicht verfügbar</string>
+  <string name="no_perms">Esta aplicação não requer nenhuma permissão.</string>
+  <string name="currentVersion">Versão Atual:</string>
+  <string name="newVersion">Nova Versão:</string>
+  <string name="not_available">não disponivel</string>
 </resources>
