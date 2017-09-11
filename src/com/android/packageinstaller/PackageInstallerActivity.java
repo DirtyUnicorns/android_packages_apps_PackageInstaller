@@ -96,7 +96,7 @@ public class PackageInstallerActivity extends OverlayTouchActivity implements On
     AppOpsManager mAppOpsManager;
     UserManager mUserManager;
     PackageInstaller mInstaller;
-    PackageInfo mPkgInfo;
+    PackageInfo mPkgInfo; //new package being installed
     String mCallingPackage;
     ApplicationInfo mSourceInfo;
 
@@ -143,6 +143,7 @@ public class PackageInstallerActivity extends OverlayTouchActivity implements On
 
         ((TextView) findViewById(R.id.install_confirm_question))
                 .setText(R.string.install_confirm_question);
+
         TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);
         tabHost.setup();
         ViewPager viewPager = (ViewPager)findViewById(R.id.pager);
@@ -216,6 +217,36 @@ public class PackageInstallerActivity extends OverlayTouchActivity implements On
         if (msg != 0) {
             ((TextView)findViewById(R.id.install_confirm_question)).setText(msg);
         }
+
+        if (mAppInfo != null) {
+            try {
+                PackageInfo currentPackage = mPm.getPackageInfo(mAppInfo.packageName,
+                        PackageManager.GET_UNINSTALLED_PACKAGES);
+                if (currentPackage == null) {
+                    final String text = getResources().getString(R.string.new_package_version) +
+                            " " + mPkgInfo.versionName;
+                    ((TextView) findViewById(R.id.version_check))
+                            .setText(text);
+                } else {
+                    final String text = getResources().getString(R.string.from_version) + " " +
+                            currentPackage.versionName + " " +
+                            getResources().getString(R.string.to_version) + " " + mPkgInfo.versionName;
+                    ((TextView) findViewById(R.id.version_check))
+                            .setText(text);
+                }
+            } catch (PackageManager.NameNotFoundException ex) {
+                final String text = getResources().getString(R.string.new_package_version) +
+                        " " + mPkgInfo.versionName;
+                ((TextView) findViewById(R.id.version_check))
+                        .setText(text);
+            }
+        } else {
+                final String text = getResources().getString(R.string.new_package_version) +
+                        " " + mPkgInfo.versionName;
+                ((TextView) findViewById(R.id.version_check))
+                        .setText(text);
+        }
+
         if (mScrollView == null) {
             // There is nothing to scroll view, so the ok button is immediately
             // set to install.
@@ -352,7 +383,7 @@ public class PackageInstallerActivity extends OverlayTouchActivity implements On
             // data we still want to count it as "installed".
             mAppInfo = mPm.getApplicationInfo(pkgName,
                     PackageManager.MATCH_UNINSTALLED_PACKAGES);
-            if ((mAppInfo.flags&ApplicationInfo.FLAG_INSTALLED) == 0) {
+            if ((mAppInfo.flags & ApplicationInfo.FLAG_INSTALLED) == 0) {
                 mAppInfo = null;
             }
         } catch (NameNotFoundException e) {

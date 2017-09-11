@@ -50,6 +50,22 @@
 
     </LinearLayout>
 
+    <LinearLayout android:id="@+id/version"
+        android:background="?android:attr/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView android:id="@+id/version_check"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/colorPrimary"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp" />
+    </LinearLayout>
+
     <TextView android:id="@+id/install_confirm_question"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
