@@ -16,7 +16,7 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!-- Version checks -->
-  <string name="from_version">De la version</string>
-  <string name="to_version">à</string>
-  <string name="new_package_version">Version</string>
+  <string name="from_version">버전에서</string>
+  <string name="to_version">으로</string>
+  <string name="new_package_version">버전</string>
 </resources>
