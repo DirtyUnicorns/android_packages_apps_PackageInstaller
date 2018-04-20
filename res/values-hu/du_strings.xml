@@ -18,5 +18,5 @@
   <!-- Version checks -->
   <string name="from_version">Erről a verzióról</string>
   <string name="to_version">erre</string>
-  <string name="new_package_version">verzióra</string>
+  <string name="new_package_version">a verzióra</string>
 </resources>
