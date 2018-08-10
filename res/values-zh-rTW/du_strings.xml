@@ -16,7 +16,7 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!-- Version checks -->
-  <string name="from_version">From version</string>
-  <string name="to_version">to</string>
-  <string name="new_package_version">Version</string>
+  <string name="from_version">從版本</string>
+  <string name="to_version">到</string>
+  <string name="new_package_version">版本</string>
 </resources>
